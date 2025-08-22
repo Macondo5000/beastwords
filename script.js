@@ -5,6 +5,16 @@ class ServiceTextConverter {
         this.bindEvents();
         this.systemPrompt = this.getSystemPrompt();
         this.lastUsedMethod = 'rules'; // 默认使用规则转换
+        
+        // 统计相关
+        this.stats = {
+            totalVisits: 0,
+            onlineUsers: 0,
+            tokenUsage: 0
+        };
+        
+        // 初始化统计
+        this.initializeStats();
     }
 
     initializeElements() {
@@ -43,6 +53,21 @@ class ServiceTextConverter {
         
         // 页面加载时检查并显示已保存的API密钥
         this.loadSavedApiKeys();
+        
+        // 页面可见性变化时更新在线状态
+        document.addEventListener('visibilitychange', () => {
+            this.updateOnlineStatus();
+        });
+        
+        // 页面卸载时更新在线状态
+        window.addEventListener('beforeunload', () => {
+            this.updateOnlineStatus(false);
+        });
+        
+        // 定期更新在线状态（每分钟）
+        setInterval(() => {
+            this.updateOnlineStatus(true);
+        }, 60000);
     }
 
     getDeepSeekPrompt() {
@@ -388,6 +413,14 @@ class ServiceTextConverter {
         }
 
         const result = await response.json();
+        
+        // 统计token使用量
+        if (result.usage) {
+            const inputTokens = result.usage.prompt_tokens || 0;
+            const outputTokens = result.usage.completion_tokens || 0;
+            this.updateTokenUsage(inputTokens, outputTokens);
+        }
+        
         return result.choices[0].message.content;
     }
 
@@ -745,6 +778,93 @@ class ServiceTextConverter {
             this.copyBtn.textContent = '复制文案';
             this.copyBtn.classList.remove('copy-success');
         }, 2000);
+    }
+
+    // 统计相关方法
+    initializeStats() {
+        // 从localStorage加载统计
+        const savedStats = localStorage.getItem('beastword_stats');
+        if (savedStats) {
+            this.stats = JSON.parse(savedStats);
+        }
+        
+        // 增加访问次数
+        this.stats.totalVisits++;
+        
+        // 更新在线用户数
+        this.updateOnlineStatus(true);
+        
+        // 保存并显示统计
+        this.saveStats();
+        this.updateStatsDisplay();
+    }
+
+    updateStatsDisplay() {
+        const totalVisitsEl = document.getElementById('totalVisits');
+        const onlineUsersEl = document.getElementById('onlineUsers');
+        const tokenUsageEl = document.getElementById('tokenUsage');
+        
+        if (totalVisitsEl) totalVisitsEl.textContent = this.stats.totalVisits.toLocaleString();
+        if (onlineUsersEl) onlineUsersEl.textContent = this.stats.onlineUsers;
+        if (tokenUsageEl) tokenUsageEl.textContent = this.stats.tokenUsage.toLocaleString();
+    }
+
+    updateOnlineStatus(isOnline = true) {
+        const sessionId = this.getSessionId();
+        const now = Date.now();
+        
+        if (isOnline) {
+            // 标记用户在线
+            localStorage.setItem(`online_${sessionId}`, now.toString());
+        } else {
+            // 标记用户离线
+            localStorage.removeItem(`online_${sessionId}`);
+        }
+        
+        // 计算在线用户数（5分钟内有活动的用户）
+        this.calculateOnlineUsers();
+        this.updateStatsDisplay();
+    }
+
+    calculateOnlineUsers() {
+        const now = Date.now();
+        const fiveMinutes = 5 * 60 * 1000;
+        let onlineCount = 0;
+        
+        // 遍历所有在线标记
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('online_')) {
+                const timestamp = parseInt(localStorage.getItem(key));
+                if (now - timestamp < fiveMinutes) {
+                    onlineCount++;
+                } else {
+                    // 清理过期的在线标记
+                    localStorage.removeItem(key);
+                }
+            }
+        }
+        
+        this.stats.onlineUsers = onlineCount;
+    }
+
+    getSessionId() {
+        let sessionId = sessionStorage.getItem('beastword_session');
+        if (!sessionId) {
+            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            sessionStorage.setItem('beastword_session', sessionId);
+        }
+        return sessionId;
+    }
+
+    updateTokenUsage(inputTokens, outputTokens) {
+        this.stats.tokenUsage += (inputTokens + outputTokens);
+        this.saveStats();
+        this.updateStatsDisplay();
+    }
+
+    saveStats() {
+        localStorage.setItem('beastword_stats', JSON.stringify(this.stats));
     }
 }
 
