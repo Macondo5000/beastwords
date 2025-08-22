@@ -5,15 +5,6 @@ class ServiceTextConverter {
         this.bindEvents();
         this.systemPrompt = this.getSystemPrompt();
         this.lastUsedMethod = 'rules'; // 默认使用规则转换
-        
-        // 统计相关
-        this.stats = {
-            totalVisits: 0,
-            onlineUsers: 0
-        };
-        
-        // 初始化统计
-        this.initializeStats();
     }
 
     initializeElements() {
@@ -52,21 +43,6 @@ class ServiceTextConverter {
         
         // 页面加载时检查并显示已保存的API密钥
         this.loadSavedApiKeys();
-        
-        // 页面可见性变化时更新在线状态
-        document.addEventListener('visibilitychange', () => {
-            this.updateOnlineStatus();
-        });
-        
-        // 页面卸载时更新在线状态
-        window.addEventListener('beforeunload', () => {
-            this.updateOnlineStatus(false);
-        });
-        
-        // 定期更新在线状态（每分钟）
-        setInterval(() => {
-            this.updateOnlineStatus(true);
-        }, 60000);
     }
 
     getDeepSeekPrompt() {
@@ -771,132 +747,7 @@ class ServiceTextConverter {
         }, 2000);
     }
 
-    // 统计相关方法
-    initializeStats() {
-        console.log('🔍 开始初始化统计...');
-        
-        // 从localStorage加载统计
-        const savedStats = localStorage.getItem('beastword_stats');
-        if (savedStats) {
-            try {
-                this.stats = JSON.parse(savedStats);
-                console.log('📊 加载已保存的统计:', this.stats);
-            } catch (error) {
-                console.error('❌ 解析统计数据失败:', error);
-                this.stats = { totalVisits: 0, onlineUsers: 0, tokenUsage: 0 };
-            }
-        } else {
-            console.log('📊 首次访问，初始化统计');
-        }
-        
-        // 增加访问次数
-        this.stats.totalVisits++;
-        console.log('👥 访问次数增加到:', this.stats.totalVisits);
-        
-        // 更新在线用户数
-        this.updateOnlineStatus(true);
-        
-        // 保存并显示统计
-        this.saveStats();
-        this.updateStatsDisplay();
-        
-        console.log('✅ 统计初始化完成');
-    }
 
-    updateStatsDisplay() {
-        console.log('🔄 更新统计显示...');
-        
-        const totalVisitsEl = document.getElementById('totalVisits');
-        const onlineUsersEl = document.getElementById('onlineUsers');
-        
-        console.log('🔍 查找统计元素:', {
-            totalVisits: !!totalVisitsEl,
-            onlineUsers: !!onlineUsersEl
-        });
-        
-        if (totalVisitsEl) {
-            totalVisitsEl.textContent = this.stats.totalVisits.toLocaleString();
-            console.log('📊 更新总访问:', this.stats.totalVisits);
-        }
-        if (onlineUsersEl) {
-            onlineUsersEl.textContent = this.stats.onlineUsers;
-            console.log('👥 更新在线用户:', this.stats.onlineUsers);
-        }
-        
-        console.log('✅ 统计显示更新完成');
-    }
-
-    updateOnlineStatus(isOnline = true) {
-        const sessionId = this.getSessionId();
-        const now = Date.now();
-        
-        console.log('🔄 更新在线状态:', { isOnline, sessionId });
-        
-        if (isOnline) {
-            // 标记用户在线
-            localStorage.setItem(`online_${sessionId}`, now.toString());
-            console.log('✅ 用户标记为在线');
-        } else {
-            // 标记用户离线
-            localStorage.removeItem(`online_${sessionId}`);
-            console.log('❌ 用户标记为离线');
-        }
-        
-        // 计算在线用户数（5分钟内有活动的用户）
-        this.calculateOnlineUsers();
-        this.updateStatsDisplay();
-    }
-
-    calculateOnlineUsers() {
-        const now = Date.now();
-        const fiveMinutes = 5 * 60 * 1000;
-        let onlineCount = 0;
-        const keysToRemove = [];
-        
-        console.log('🔍 开始计算在线用户数...');
-        
-        // 先收集所有需要清理的键，避免在遍历时修改
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith('online_')) {
-                const timestamp = parseInt(localStorage.getItem(key));
-                console.log('🔍 检查在线标记:', { key, timestamp, age: now - timestamp });
-                
-                if (now - timestamp < fiveMinutes) {
-                    onlineCount++;
-                    console.log('✅ 用户在线:', key);
-                } else {
-                    // 标记需要清理的过期键
-                    keysToRemove.push(key);
-                    console.log('⏰ 用户过期:', key);
-                }
-            }
-        }
-        
-        // 清理过期的在线标记
-        keysToRemove.forEach(key => {
-            localStorage.removeItem(key);
-            console.log('🗑️ 清理过期标记:', key);
-        });
-        
-        this.stats.onlineUsers = onlineCount;
-        console.log('📊 在线用户数计算完成:', onlineCount);
-    }
-
-    getSessionId() {
-        let sessionId = sessionStorage.getItem('beastword_session');
-        if (!sessionId) {
-            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            sessionStorage.setItem('beastword_session', sessionId);
-        }
-        return sessionId;
-    }
-
-
-
-    saveStats() {
-        localStorage.setItem('beastword_stats', JSON.stringify(this.stats));
-    }
 }
 
 // 页面加载完成后初始化

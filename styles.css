@@ -43,46 +43,7 @@ header h1 {
     margin-bottom: 20px;
 }
 
-.top-right-stats {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 0.7rem;
-    color: #64748b;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
 
-.stat-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 4px;
-    line-height: 1.2;
-}
-
-.stat-line:last-child {
-    margin-bottom: 0;
-}
-
-.stat-label {
-    font-weight: 500;
-    color: #64748b;
-    white-space: nowrap;
-}
-
-.stat-value {
-    font-weight: 600;
-    color: #374151;
-    min-width: 30px;
-    text-align: right;
-}
 
 
 
