@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API测试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .api-key {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        .test-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+            white-space: pre-wrap;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+        .loading {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔑 DeepSeek API 测试页面</h1>
+        
+        <h3>您的API密钥：</h3>
+        <div class="api-key">sk-f679283e31b24e16a9a3d658d9add6a7</div>
+        
+        <h3>测试文案转换：</h3>
+        <textarea class="test-input" id="testInput" rows="4" placeholder="输入要测试的文案，例如：这个不对，要看最新文档">这个不对，要看最新文档</textarea>
+        
+        <div>
+            <button class="test-btn" onclick="testAPI()">🚀 测试API调用</button>
+            <button class="test-btn" onclick="testRules()">⚙️ 测试规则转换</button>
+            <button class="test-btn" onclick="clearResult()">🗑️ 清除结果</button>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_KEY = "sk-f679283e31b24e16a9a3d658d9add6a7";
+        const API_URL = "https://api.deepseek.com/v1/chat/completions";
+        
+        const systemPrompt = `你是一位专业的文案优化与客户服务专家，擅长将各种生硬、直接或不规范的商务沟通语言，转化为温柔、体贴、周到且专业的高级服务用语。
+
+【核心指令】
+请将用户输入的任何一句话，转化为"贴心服务版"。转化时必须严格遵守以下规则：
+
+【风格与语气规则】
+1. **积极正面：** 永远使用积极正面的词汇，避免任何负面词汇（如：错误、问题、失败、但是）。如需指出差异，请使用"微调"、"优化"、"更新"等词。
+2. **谦逊礼貌：** 使用敬语（如"请"、"您"、"劳驾"）、谦词（如"抱歉"、"不好意思"）和舒缓的语气词（如"哦"、"呢"、"哈"）。
+3. **主动负责：** 将"你"的问题，转化为"我"的责任。例如，不说"你搞错了"，而说"我可能刚才没同步清楚"。
+4. **提供价值：** 在回复中主动提供额外帮助，例如"我随时可以协助"、"有任何需要请告诉我"。
+5. **结构清晰：** 转化后的句子应流畅自然，逻辑清晰，可以通过分句让长句更易读。
+
+【输出规则】
+1. 只输出转化后的最终结果，不要添加任何解释、开场白或总结。
+2. 严格遵守用户输入的原意，不得编造或添加原文中不存在的事实性信息。
+3. 长度适中，通常比原文稍长即可。
+
+现在，请开始处理用户的输入。`;
+
+        async function testAPI() {
+            const inputText = document.getElementById('testInput').value.trim();
+            if (!inputText) {
+                showResult('请输入要测试的文案', true);
+                return;
+            }
+
+            showResult('🔄 正在调用DeepSeek API...', false, true);
+            
+            try {
+                const data = {
+                    "model": "deepseek-chat",
+                    "messages": [
+                        {"role": "system", "content": systemPrompt},
+                        {"role": "user", "content": inputText}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 2000
+                };
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status} - ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                const convertedText = result.choices[0].message.content;
+                
+                showResult(`✅ API调用成功！\n\n🤖 AI转换结果：\n${convertedText}`, false);
+                
+            } catch (error) {
+                console.error('API调用错误:', error);
+                showResult(`❌ API调用失败：\n${error.message}`, true);
+            }
+        }
+
+        function testRules() {
+            const inputText = document.getElementById('testInput').value.trim();
+            if (!inputText) {
+                showResult('请输入要测试的文案', true);
+                return;
+            }
+
+            const convertedText = applyConversionRules(inputText);
+            showResult(`⚙️ 规则转换结果：\n${convertedText}`, false);
+        }
+
+        function applyConversionRules(inputText) {
+            let result = inputText;
+            
+            // 规则1: 将负面词汇替换为正面词汇
+            const negativeToPositive = {
+                '不对': '需要微调',
+                '错误': '需要优化',
+                '问题': '需要关注',
+                '失败': '需要调整',
+                '但是': '同时',
+                '不行': '需要改进',
+                '不能': '需要调整',
+                '不可以': '需要优化'
+            };
+            
+            Object.entries(negativeToPositive).forEach(([negative, positive]) => {
+                result = result.replace(new RegExp(negative, 'g'), positive);
+            });
+
+            // 规则2: 添加敬语和礼貌用语
+            if (!result.includes('您') && !result.includes('请')) {
+                if (result.startsWith('这个') || result.startsWith('那个')) {
+                    result = result.replace(/^(这个|那个)/, '关于这个');
+                }
+                result = '您好，' + result;
+            }
+
+            // 规则3: 添加舒缓语气词
+            if (!result.includes('哦') && !result.includes('呢') && !result.includes('哈')) {
+                if (result.endsWith('。')) {
+                    result = result.replace(/。$/, '哦。');
+                } else if (result.endsWith('！')) {
+                    result = result.replace(/！$/, '呢！');
+                } else {
+                    result += '哦';
+                }
+            }
+
+            // 规则4: 主动提供帮助
+            if (!result.includes('随时') && !result.includes('协助') && !result.includes('帮助')) {
+                result += '，如果还有任何需要，我随时可以为您提供协助。';
+            }
+
+            return result;
+        }
+
+        function showResult(message, isError = false, isLoading = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${isError ? 'error' : ''} ${isLoading ? 'loading' : ''}`;
+            resultDiv.textContent = message;
+        }
+
+        function clearResult() {
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = 'result';
+        }
+    </script>
+</body>
+</html>

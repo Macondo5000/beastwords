@@ -1,0 +1,584 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: #ffffff;
+    min-height: 100vh;
+    color: #000000;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #000000;
+}
+
+.description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    opacity: 0.8;
+    margin-top: 16px;
+}
+
+.api-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #9ca3af;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.online {
+    background: #10b981;
+    animation: none;
+}
+
+.status-dot.offline {
+    background: #ef4444;
+    animation: none;
+}
+
+.status-text {
+    font-weight: 500;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.api-section {
+    margin-bottom: 30px;
+    padding: 25px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.api-section h3 {
+    margin-bottom: 20px;
+    color: #555;
+    font-size: 1.3rem;
+}
+
+.model-status {
+    margin-bottom: 25px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.status-icon {
+    font-size: 1.2rem;
+}
+
+.status-text {
+    flex: 1;
+    font-weight: 500;
+    color: #495057;
+}
+
+.status-indicator {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-indicator:contains('✅') {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-indicator:contains('❌') {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-indicator:contains('检测中') {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.api-config {
+    margin-bottom: 15px;
+}
+
+.api-input-group {
+    margin-bottom: 15px;
+}
+
+.api-input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.api-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.api-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.api-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.save-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.save-btn:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.clear-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.clear-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.api-note {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0;
+    font-style: italic;
+}
+
+.converter-layout {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    margin-bottom: 40px;
+    align-items: start;
+}
+
+.input-panel,
+.output-panel {
+    background: #ffffff;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e1e5e9;
+    background: #f9fafb;
+}
+
+.panel-header h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #111827;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.center-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    margin-top: 120px;
+}
+
+.tailwind-textarea {
+    width: 100%;
+    padding: 20px;
+    border: none;
+    font-size: 0.875rem;
+    font-family: inherit;
+    resize: none;
+    background: #ffffff;
+    color: #111827;
+    line-height: 1.5;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.tailwind-textarea:focus {
+    outline: none;
+    background: #ffffff;
+}
+
+.tailwind-textarea::placeholder {
+    color: #9ca3af;
+}
+
+.convert-btn {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    min-width: 80px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.convert-btn:hover {
+    background: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.convert-btn:active {
+    transform: translateY(0);
+}
+
+.convert-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.output-content {
+    padding: 20px;
+    min-height: 300px;
+    background: #ffffff;
+}
+
+.placeholder-text {
+    color: #9ca3af;
+    font-style: italic;
+    text-align: center;
+    margin-top: 120px;
+    font-size: 0.875rem;
+}
+
+.converted-text {
+    color: #111827;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.error-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #dc2626;
+}
+
+.error-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+}
+
+.error-text {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #dc2626;
+}
+
+.error-suggestion {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-style: italic;
+    margin-bottom: 16px;
+}
+
+.retry-btn {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.retry-btn:hover {
+    background: #1f2937;
+    transform: translateY(-1px);
+}
+
+.copy-btn {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.copy-btn:hover {
+    background: #1f2937;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.result-section {
+    margin-bottom: 40px;
+}
+
+.result-section h3 {
+    margin-bottom: 20px;
+    color: #555;
+    font-size: 1.3rem;
+}
+
+.result-box {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    border-left: 4px solid #667eea;
+    position: relative;
+}
+
+.mode-indicator {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    display: inline-block;
+    text-align: center;
+}
+
+.result-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+}
+
+.copy-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.examples-section h3 {
+    margin-bottom: 25px;
+    color: #555;
+    font-size: 1.3rem;
+}
+
+.example-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.example-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.example-input {
+    background: #e9ecef;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: 500;
+    color: #495057;
+    border-left: 3px solid #6c757d;
+}
+
+.example-output {
+    color: #28a745;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    color: #666666;
+    font-size: 0.9rem;
+    margin-top: 60px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .converter-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .center-button {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .converter-layout {
+        gap: 16px;
+    }
+    
+    .panel-header {
+        padding: 12px 16px;
+    }
+    
+    .tailwind-textarea {
+        padding: 16px;
+    }
+    
+    .output-content {
+        padding: 16px;
+    }
+}
+
+/* 成功提示动画 */
+.copy-success {
+    animation: copySuccess 0.6s ease;
+}
+
+@keyframes copySuccess {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* 加载状态 */
+.btn-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-text {
+    display: inline;
+}
+
+/* 错误状态 */
+.error {
+    border-color: #dc3545 !important;
+    background: #fff5f5 !important;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}

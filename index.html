@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐮🐎服务型沟通转换器 - 高情商必备</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐮🐎服务型沟通转换器</h1>
+            <p class="description">极度尊重对方时间和专业、具有高度同理心、主动承担责任、并体贴地为对方提供灵活性。消除任何可能的指责意味，并时刻充分为对方着想。将语气放到最柔和、最体贴的模式。</p>
+            <div class="api-status">
+                <span class="status-dot" id="statusDot"></span>
+                <span class="status-text" id="statusText">检测AI服务状态...</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="converter-layout">
+                <div class="input-panel">
+                    <div class="panel-header">
+                        <h3>输入文案</h3>
+                    </div>
+                    <textarea 
+                        id="userInput" 
+                        placeholder="输入要转换的文案..."
+                        rows="12"
+                        class="tailwind-textarea"
+                    ></textarea>
+                </div>
+
+                <div class="center-button">
+                    <button id="convertBtn" class="convert-btn">
+                        <span class="btn-text">转换</span>
+                        <span class="btn-loading" style="display: none;">
+                            <div class="spinner"></div>
+                        </span>
+                    </button>
+                </div>
+
+                <div class="output-panel">
+                    <div class="panel-header">
+                        <h3>转换结果</h3>
+                        <button id="copyBtn" class="copy-btn" style="display: none;">复制</button>
+                    </div>
+                    <div class="output-content" id="outputContent">
+                        <div class="placeholder-text">
+                            转换后的文案将显示在这里
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by AI, Built by Koko</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
