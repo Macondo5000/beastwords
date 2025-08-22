@@ -84,21 +84,7 @@ header h1 {
     text-align: right;
 }
 
-.reset-stats-btn {
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.6rem;
-    cursor: pointer;
-    margin-top: 4px;
-    width: 100%;
-}
 
-.reset-stats-btn:hover {
-    background: #dc2626;
-}
 
 
 
