@@ -68,6 +68,12 @@ class ServiceTextConverter {
         setInterval(() => {
             this.updateOnlineStatus(true);
         }, 60000);
+        
+        // 绑定重置统计按钮
+        const resetStatsBtn = document.getElementById('resetStats');
+        if (resetStatsBtn) {
+            resetStatsBtn.addEventListener('click', () => this.resetStats());
+        }
     }
 
     getDeepSeekPrompt() {
@@ -782,14 +788,25 @@ class ServiceTextConverter {
 
     // 统计相关方法
     initializeStats() {
+        console.log('🔍 开始初始化统计...');
+        
         // 从localStorage加载统计
         const savedStats = localStorage.getItem('beastword_stats');
         if (savedStats) {
-            this.stats = JSON.parse(savedStats);
+            try {
+                this.stats = JSON.parse(savedStats);
+                console.log('📊 加载已保存的统计:', this.stats);
+            } catch (error) {
+                console.error('❌ 解析统计数据失败:', error);
+                this.stats = { totalVisits: 0, onlineUsers: 0, tokenUsage: 0 };
+            }
+        } else {
+            console.log('📊 首次访问，初始化统计');
         }
         
         // 增加访问次数
         this.stats.totalVisits++;
+        console.log('👥 访问次数增加到:', this.stats.totalVisits);
         
         // 更新在线用户数
         this.updateOnlineStatus(true);
@@ -797,16 +814,37 @@ class ServiceTextConverter {
         // 保存并显示统计
         this.saveStats();
         this.updateStatsDisplay();
+        
+        console.log('✅ 统计初始化完成');
     }
 
     updateStatsDisplay() {
+        console.log('🔄 更新统计显示...');
+        
         const totalVisitsEl = document.getElementById('totalVisits');
         const onlineUsersEl = document.getElementById('onlineUsers');
         const tokenUsageEl = document.getElementById('tokenUsage');
         
-        if (totalVisitsEl) totalVisitsEl.textContent = this.stats.totalVisits.toLocaleString();
-        if (onlineUsersEl) onlineUsersEl.textContent = this.stats.onlineUsers;
-        if (tokenUsageEl) tokenUsageEl.textContent = this.stats.tokenUsage.toLocaleString();
+        console.log('🔍 查找统计元素:', {
+            totalVisits: !!totalVisitsEl,
+            onlineUsers: !!onlineUsersEl,
+            tokenUsage: !!tokenUsageEl
+        });
+        
+        if (totalVisitsEl) {
+            totalVisitsEl.textContent = this.stats.totalVisits.toLocaleString();
+            console.log('📊 更新总访问:', this.stats.totalVisits);
+        }
+        if (onlineUsersEl) {
+            onlineUsersEl.textContent = this.stats.onlineUsers;
+            console.log('👥 更新在线用户:', this.stats.onlineUsers);
+        }
+        if (tokenUsageEl) {
+            tokenUsageEl.textContent = this.stats.tokenUsage.toLocaleString();
+            console.log('💰 更新Token消耗:', this.stats.tokenUsage);
+        }
+        
+        console.log('✅ 统计显示更新完成');
     }
 
     updateOnlineStatus(isOnline = true) {
@@ -865,6 +903,35 @@ class ServiceTextConverter {
 
     saveStats() {
         localStorage.setItem('beastword_stats', JSON.stringify(this.stats));
+    }
+
+    resetStats() {
+        if (confirm('确定要重置所有统计数据吗？')) {
+            console.log('🔄 重置统计数据...');
+            
+            // 重置统计
+            this.stats = {
+                totalVisits: 0,
+                onlineUsers: 0,
+                tokenUsage: 0
+            };
+            
+            // 清除localStorage中的统计
+            localStorage.removeItem('beastword_stats');
+            
+            // 清除所有在线标记
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('online_')) {
+                    localStorage.removeItem(key);
+                }
+            }
+            
+            // 重新初始化
+            this.initializeStats();
+            
+            console.log('✅ 统计数据已重置');
+        }
     }
 }
 
