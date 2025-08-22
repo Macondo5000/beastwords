@@ -43,9 +43,6 @@ class ServiceTextConverter {
         
         // 页面加载时检查并显示已保存的API密钥
         this.loadSavedApiKeys();
-        
-        // 检测AI服务状态
-        this.checkAIStatus();
     }
 
     getDeepSeekPrompt() {
@@ -509,9 +506,22 @@ class ServiceTextConverter {
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
         
+        if (!statusDot || !statusText) {
+            console.log('状态元素未找到，跳过状态检测');
+            return;
+        }
+        
+        // 设置超时时间（5秒）
+        const timeout = 5000;
+        
         try {
-            // 优先检测DeepSeek API状态
-            const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+            // 创建超时Promise
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('检测超时')), timeout);
+            });
+            
+            // 检测DeepSeek API状态（简化测试）
+            const fetchPromise = fetch("https://api.deepseek.com/v1/chat/completions", {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Bearer sk-90cc4f72fd2c43f291843b2f46d64611',
@@ -522,22 +532,33 @@ class ServiceTextConverter {
                     messages: [
                         {"role": "user", "content": "测试"}
                     ],
-                    max_tokens: 10
+                    max_tokens: 5
                 })
             });
-
+            
+            // 竞争超时和API调用
+            const response = await Promise.race([fetchPromise, timeoutPromise]);
+            
             if (response.ok) {
                 statusDot.className = 'status-dot online';
                 statusText.textContent = 'DeepSeek AI服务正常';
                 statusText.style.color = '#10b981';
+                console.log('DeepSeek API状态检测成功');
             } else {
                 statusDot.className = 'status-dot offline';
                 statusText.textContent = 'DeepSeek服务暂时不可用';
                 statusText.style.color = '#ef4444';
+                console.log('DeepSeek API状态检测失败:', response.status);
             }
         } catch (error) {
+            console.error('DeepSeek API状态检测错误:', error);
             statusDot.className = 'status-dot offline';
-            statusText.textContent = 'DeepSeek服务连接失败';
+            
+            if (error.message === '检测超时') {
+                statusText.textContent = 'DeepSeek服务检测超时';
+            } else {
+                statusText.textContent = 'DeepSeek服务连接失败';
+            }
             statusText.style.color = '#ef4444';
         }
     }

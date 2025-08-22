@@ -42,42 +42,7 @@ header h1 {
     margin-top: 16px;
 }
 
-.api-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 20px;
-    font-size: 0.75rem;
-    color: #6b7280;
-}
 
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #9ca3af;
-    animation: pulse 2s infinite;
-}
-
-.status-dot.online {
-    background: #10b981;
-    animation: none;
-}
-
-.status-dot.offline {
-    background: #ef4444;
-    animation: none;
-}
-
-.status-text {
-    font-weight: 500;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
 
 .api-section {
     margin-bottom: 30px;
